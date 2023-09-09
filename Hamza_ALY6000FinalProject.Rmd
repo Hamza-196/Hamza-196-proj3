@@ -1,0 +1,364 @@
+---
+title: "Hamza_ALY6000FinalProject"
+author: "Hamza Alshaibani"
+date: "`r Sys.Date()`"
+output: html_document
+---
+TITLE
+---
+
+<P><BR>
+<CENTER><FONT SIZE = 4>
+<B> ALY600 INTRODUCTION TO ANALYTICS </B>
+<BR><B>NORTHEASTERN UNIVERSITY</B>
+<BR> Hamza Alshaibani
+<BR>Date: "`r Sys.Date()`"
+<P> 
+<U> Final Project </U>
+</FONT>
+</CENTER>
+
+---
+Library Data
+---
+
+```{r libraryData, message=FALSE, warning=FALSE}
+library(RColorBrewer)
+library(plyr)
+library(epiDisplay)
+library(rmarkdown)
+library(readxl)
+library(readr)
+library(knitr)
+library(tidyverse)
+library(dplyr)
+library(kableExtra)
+library(magrittr)
+library(RColorBrewer)
+library(kableExtra)
+library(FSA)
+m6data <- read_excel("Datasets/m6data.xlsx")
+```
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task1.1
+</B>
+</FONT>
+<BR>
+In task1.1, I have decided to examine the frequency of each market. The reason I chose this specific method for looking at my dataset is that I will continue to examine the data in future tasks by categorizing them by market. 
+<BR>
+```{r task1.1, message=FALSE, warning=FALSE}
+#using the table, and kable_styling functions to examine Market frequency
+MarketFreq <- table(m6data$Market)
+MarketFreq1 <- MarketFreq %>%
+  kbl(caption = "Frequency of Each Market") %>%
+  kable_classic() %>%
+  kable_material_dark() #(Zhu, 2021)
+MarketFreq1
+```
+<BR>
+The table above shows that the market with the greatest frequency is Asia Pacific. This leads me to assume that it will consequently also have the highes sales, the highest total amount of losses, and the greatest quantity of products sold. Similarly, the Africa market will have the least of the variables mentioned. 
+<BR>
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task1.2
+</B>
+</FONT>
+<BR>
+In task1.2, I have chosen to use a barplot as well as a pie chart to help visualize the market share of each market for a better understanding of the dataset.
+<BR>
+```{r task1.2, message=FALSE, warning=FALSE}
+#Using the par(mar) function, barplot() function, and pie() function to visualize market frequency. 
+par(mar = c(7,4,3,.4))
+MarketBar <- barplot(MarketFreq,
+        main = "Hamza Market Barplot",
+        xlim = c(0, 10),
+        ylim = c(0,400),
+        las = 2,
+        col = c("blue", "yellow", "purple", "darkgreen", "grey"),
+        cex.axis = 1.1,
+        cex.names = 1.1,
+        space = 0.4)
+text(MarketFreq,
+     MarketBar,
+     MarketFreq,
+     cex = 0.7,
+     pos = 3)
+MarketPie <- pie(MarketFreq,
+                  main = "Hamza - Market Pie Chart",
+                 col =  gray.colors(7),
+                  labels = MarketFreq,
+                  radius = 0.8,
+                 lty = 1,
+                 cex = 0.9,
+                 font = 5)
+legend("bottomleft",
+       legend = paste(unique(sort(m6data$Market))),
+       fill = gray.colors(7),
+       border = "white",
+         cex = 0.8) #(Chiluiza, 2021)
+```
+<BR>
+Based off of the table two graphs presented above, I can now better visualize the difference in each of the market shares of the 5 markets
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task 2
+</B>
+</FONT>
+<BR>
+Task 2 is a horizontal boxplot and histogram that shows the data distribution of the shipping cost of the items grouped onto one visual. 
+<BR>
+```{r task2, message=FALSE, warning=FALSE}
+#boxplot and histograms of shipping cost
+par(mfcol=c(2,1))
+boxplot(m6data$Shipping_Cost_Each,
+horizontal = T,
+main = "Hamza - Shipping Cost Box Plot",
+col = brewer.pal(9, "Greys"),
+xlab = "SCE",
+whisklty = 1,
+outpch = 16, 
+outcol = "black")
+text(x = boxplot.stats(m6data$Shipping_Cost_Each)$stats,
+     labels = boxplot.stats(m6data$Shipping_Cost_Each)$stats,
+     y = 1.3, 
+     cex = 0.4,)
+task2mean <- mean(m6data$Shipping_Cost_Each)
+text(x = task2mean,
+     labels = round(task2mean, 2),
+     y = 1,
+     cex = 0.4,
+     col = "black") #(Chiluiza, 2021)
+
+abline(v = mean(m6data$Shipping_Cost_Each),
+       col = "black",
+       lwd = 1)
+
+task2median <- median(m6data$Shipping_Cost_Each)
+text(x = task2median,
+     labels = round(task2median, 2),
+     y = 1,
+     cex = 0.4,
+     col = "blue")
+
+hist(m6data$Shipping_Cost_Each,
+     main = "Hamza = Histogram of Shipping Costs",
+     las = 1,
+     ylab = "Frequency",
+     xlab = "Shipping Cost",
+     breaks = 40,
+     col = gray.colors(5),
+     ylim = c(0,170),
+     labels = T
+     )
+
+abline(v = mean(m6data$Shipping_Cost_Each),
+       col = "black",
+       lwd = 1)
+abline(v = median(m6data$Shipping_Cost_Each),
+       col = "blue",
+       lwd = 2) #(Chiluiza, 2021)
+```
+<BR>
+In the visual presented above, I can see the distribution of the shipping costs. It appears that the data has an extreme number of outliers that have effected the mean. From the boxplot, it is apparent that the data is skewed positively as the mean is greater than the median. The histogram also shows that there is a great concentration of values on the higher end of the shipping costs that need further investigation. 
+Side note: I do nnot understand the reason for using the par(mfcol()) function in this task as I would have created 3 chunks, the first would just show the code and hide the results, while the other 2 would show the results and hide the code. In this way, I would be able to view the charts together without distorting them so I may get a better picture of the results. 
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task 3
+</B>
+</FONT>
+<BR>
+Task 3 is a boxplot that displays the shipping cost by market. 
+<BR>
+```{r task3, message=FALSE, warning=FALSE}
+#boxplot function to display the shipping cost by market  
+boxplot(m6data$Shipping_Cost_Each ~ m6data$Market,
+         main = "Hamza - Market Shipping Costs comparisonn",
+         ylab = "Shipping Costs",
+         xlab = "Market") #(Chiluiza, 2021)
+```
+<BR>
+Based off of the visual displayed above, it is apparent that Africa's shipping costs are fairly distributed with no outliers, while also contaning the highest max and minimum shipping costs. Based off of the visual, I would be more inclined to want to ship to the USCA market as it contains the overal lowest shipping costs with minimal outliers. This further gives insight as to why the Africa market had the least frequency compared to the rest.  
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task 4
+</B>
+</FONT>
+<BR>
+Task 4 is a table and barplot that display the mean shipping costs per market. 
+<BR>
+```{r task4, message=FALSE, warning=FALSE}
+#Using a barplot and table to display mean shipping costs per market. 
+market_mean_sc <- tapply(m6data$Shipping_Cost_Each, m6data$Market, mean, no.rm=T)
+market_mean_sc1 <- market_mean_sc %>%
+  kbl(caption = "Mean Shipping Cost of Each Market") %>%
+  kable_classic() %>%
+  kable_material_dark() #(Zhu, 2021)
+market_mean_sc1
+barplot(market_mean_sc)
+```
+<BR> 
+In this table, you can see that the mean shipping cost per market is displayed. The results are expected as they directly relate to the boxplots above, showing the Africa market with the greatest mean, and the USCA market with the lowest.
+<BR>
+For extra credit...
+<BR>
+```{r task4ec, message=FALSE, warning=FALSE}
+#Using barplot() to display median quantities of each market to see if there is a relationship with their frequency
+market_median_sc <- tapply(m6data$Quantity, m6data$Market, median, no.rm=T) #(Chiluiza, 2021)
+market_median_sc1 <- market_median_sc %>%
+  kbl(caption = "Median Quantity of Each Market") %>%
+  kable_classic() %>%
+  kable_material_dark() #(Zhu, 2021)
+market_median_sc1
+barplot(market_median_sc) 
+```
+<BR>
+Based off of the table barplot, It is interesting to see that though USCA has the greatest median in quantity, it also has the second-to-least frequency amongst its competing markets. 
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task 5
+</B>
+</FONT>
+<BR>
+Task 5 is a boxplot comparing the shipping cost distribution based on each shipping mode. 
+<BR>
+```{r task5, message=FALSE, warning=FALSE}
+#Using boxplot to compare shipping costs by shipping mode. 
+boxplot(m6data$Shipping_Cost_Each ~ m6data$ShipMode,
+         main = "Hamza - Shipping Costs by Mode",
+         ylab = "Shipping Costs",
+         xlab = "Mode") #(Chiluiza, 2021)
+```
+<BR>
+Based off the visual presented, it appears that the cheapest mode for shipping is Standard, while the most espensive is Same Data delivery unsurprisingly. It is also important to note that there are some cases where First Class is cheaper than Standard. 
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task 6
+</B>
+</FONT>
+<BR>
+Task 6 is simply adding a Total Sales column to the dataset. 
+<BR>
+```{r task6, message=FALSE, warning=FALSE, results='hide'}
+ m6data2 <- m6data %>%
+  mutate(Total_Sales = Product_Price * Quantity)
+glimpse(m6data2[1, ])
+```
+<BR>
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task 7
+</B>
+</FONT>
+<BR>
+Task 7 is a table that displays the Total Sales by market
+<BR>
+```{r task7, message=FALSE, warning=FALSE}
+#Using Table and Kable_styling functions to display a table of total sales by market
+table7 <- m6data2 %>%
+  group_by(Market) %>%
+  summarise(Total_Market_Sales = sum(Total_Sales))
+table7.1 <- table7 %>%
+  kbl(caption = "Total Sales by Market") %>%
+  kable_classic() %>%
+  kable_material_dark() #(Zhu, 2021)
+table7.1
+```
+This is my inline rcode table result for extra credit `r table7.1`
+<BR>
+Based off of the tables presented, it appears that the Asia Pacific and Europe markets brings in the highest sales. Not surprisingly, it also shows that the Africa market also brings in the least. This is most likely due to it having the least frequency and the greatest shipping costs comparatively. 
+<P>
+<BR>
+<FONT SIZE = 4>
+<B> Task 8
+</B>
+</FONT>
+<BR>
+Task 8 is a combination of the filter, mutate, and groupby functions to view the sales, losses, and profits by market
+<BR>
+```{r task8, message=FALSE, warning=FALSE}
+#Using tapply(), filter(), and mutate() 
+t4tech <- dplyr::filter(m6data2, m6data2$Department == "Technology")
+table8 <- t4tech %>%
+  group_by(Market) %>%
+  mutate(Total_Loss = Loss_Per_Return * Returns) %>%
+  mutate(Profit = Total_Sales - Total_Loss) %>%
+    summarize(Total_Market_Sales = sum(Total_Sales), Total_Market_Loss = sum(Total_Loss), Total_Market_Profit = sum(Profit)) #(Zhu, 2022)
+table8.1 <- table8 %>%
+  kbl(caption = "Total Profits by Market") %>%
+  kable_classic() %>%
+  kable_material_dark() #(Zhu, 2021)
+table8.1
+
+par(mar = c(7,5,3,.4))
+
+salesbar <- barplot(table8$Total_Market_Sales/1000,
+         main = "Hamza - Sales by Market Barplot",
+        names = c("Africa","Asia Pacific","Europe","LATAM","USCA"),
+        col = gray.colors(5),
+        ylab = "Total Sales x 1000",
+        ylim = c(0,10000),
+        las = 2,
+        cex.axis = .8,
+        cex.names = 1.1,
+        space = 0.2)
+
+lossesbar <- barplot(table8$Total_Market_Loss/100,
+         main = "Hamza - Losses by Market Barplot",
+        names = c("Africa","Asia Pacific","Europe","LATAM","USCA"),
+        col = gray.colors(5),
+        ylab = "Total Losses x 100",
+        ylim = c(0,15000),
+        las = 2,
+        cex.axis = .8,
+        cex.names = 1.1,
+        space = 0.2)
+
+profitbar <- barplot(table8$Total_Market_Profit/1000,
+         main = "Hamza - Profit by Market Barplot",
+        names = c("Africa","Asia Pacific","Europe","LATAM","USCA"),
+        col = gray.colors(5),
+        ylab = "Total Profits x 1000",
+        ylim = c(0,10000),
+        las = 2,
+        cex.axis = .8,
+        cex.names = 1.1,
+        space = 0.2)
+```
+<BR>
+For this task I created a table that presents the total sales, losses, and profits by market. I would like to point your attention to the final barplot which shows the profits as that will be the visual that I would like the stakeholders to recognize. It shows that not surprisingly, Africa has the least profits, while Asia Pacific has the highest. What is interesting is that Europe seems to have a greater profit margin than the rest as its sales are high but its costs are relatively low. What I would do in the future (due to time constraints) is that I would calculate the profit margins by dividing the total profit by total sales and then multiplying it by 100 for each market to achieve the margins. The result will further point stakeholders in the direction of the most profitable market. 
+<P>
+<BR>
+<B>
+<U>
+<Font Size = 4><CENTER>
+Bibliography 
+</FONT></CENTER></U></B>
+<P>
+Chiluiza, D. (2021, June). Introduction to analytics using R, R Studio and R Markdown Short manual serie. RPubs. Retrieved February 5, 2023, from https://rpubs.com/Dee_Chiluiza/home 
+<P>
+Zhu, H. (2021, February 19). Create Awesome HTML Table with knitr::kable and kableExtra. Create awesome HTML table with knitr::kable and kableextra. Retrieved February 18, 2023, from https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html 
+<P>
+Zhu, Y. F. and J. (2022, June 5). R programming: Zero to pro. 6.7 Grouped Mutate and Filter via group_by(). Retrieved February 18, 2023, from https://r02pro.github.io/grouped-mutate-filter.html 
+<P>
+<P>
+<P>
+
+
+
+
+
+
+
+
+
+
+
